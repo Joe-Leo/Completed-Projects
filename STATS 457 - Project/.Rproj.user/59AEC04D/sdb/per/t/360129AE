@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Untitled\"\nauthor: \"Joseph Leong, Sam Whittaker, Ryan Isherwood\"\ndate: \"November 10, 2016\"\noutput: html_document\n---\n\nThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.\n\nWhen you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n\nData Import \n```{r}\n#load Data set\nAAPL = read.csv(\"AAPL-NASDAQ-10Y.csv\", header = T)\n#check first/ last values, and data type\nhead(AAPL)\ntail(AAPL)\nsapply(AAPL, typeof)\n#converte dates into Date objects, corrects for todays date as well\nAAPL$date=as.Date(format(AAPL$date),format = \"%Y/%m/%d\")\nAAPL$date[1] = as.Date('2016/11/10')\n\n#reorder data from oldest to newest\nAAPL$date = rev(AAPL$date)\nAAPL$close = rev(AAPL$close)\nAAPL$volume = rev(AAPL$volume)\nAAPL$open = rev(AAPL$open)\nAAPL$high = rev(AAPL$high)\nAAPL$low = rev(AAPL$low)\n\nhead(AAPL)\ntail(AAPL)\n#create time series object (Yearly) \ntable(format(AAPL$date,'%Y')) # how many obs in each year\nAAPL.ts =  ts(AAPL$close, start=c(2006,217), frequency = 252) # need to correct the frequency and start date\nts.plot(AAPL.ts)\nplot(AAPL$date, AAPL$close, xlab = \"Year\", ylab = \"AAPL Closing price\", main = \"Performance of AAPL over a 10 year cycle\", type=\"l\")\ntime(AAPL.ts)\nhead(time(AAPL.ts))\n#check if dataset matches up\nhead(AAPL.ts)\nhead(AAPL$close)\ntail(AAPL.ts)\ntail(AAPL$close)\n```\n\nTime Series Part\n```{r}\nlibrary(forecast)\nlibrary(astsa)\nndiffs(AAPL.ts)\nsummary(AAPL.ts)\nacf(AAPL.ts,lag.max = 10000)\nccf(AAPL.ts, lag.max = 10000)\nAAPL[35,1]\n#try Log diff model\nAAPL.ts.log = diff(log(AAPL.ts ))\nplot.ts(AAPL.ts.log)\nacf2(AAPL.ts.log, max.lag = 252)\nacf(AAPL.ts)\n\n\n```",
+    "created" : 1478813836477.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2148301859",
+    "id" : "360129AE",
+    "lastKnownWriteTime" : 1478857049,
+    "last_content_update" : 1478857049558,
+    "path" : "C:/Users/angel/Dropbox/STATS 457 - Project/testing.rmd",
+    "project_path" : "testing.rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

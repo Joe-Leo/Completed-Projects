@@ -1,0 +1,17 @@
+{
+    "contents" : "library(astsa)\ndata<-read.csv(\"C:\\\\Users\\\\Sam\\\\Documents\\\\stat 457\\\\project\\\\AAPL-NASDAQ-10Y.csv\", header=TRUE, stringsAsFactors = FALSE)\nattach(data)\nclose.p=rev(close)\nopen.p=rev(open)\nRaw.Data=(open.p+close.p)/2\nPrice=ts(Raw.Data, start=c(2006, 200), frequency=(252))\nlog.Price=log(Price)\nlog.diff=diff(log.Price)\ndiff.Price=diff(Price)\n\nsarima(log.Price, 12,1,2)\nsarima.for(Price, 30,12,1,2)",
+    "created" : 1480205076720.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "472174264",
+    "id" : "3FF650D7",
+    "lastKnownWriteTime" : 1480280941,
+    "path" : "D:/Dropbox/STATS 457 - Project/Projectstart.R",
+    "project_path" : "Projectstart.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

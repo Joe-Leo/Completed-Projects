@@ -1,0 +1,21 @@
+"0","marathon[ marathon$hometown == BC.levels[1] |
+          marathon$hometown == BC.levels[2] |
+          marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+            marathon$hometown == BC.levels[3] |
+          ,]
+"
+"2","Error: unexpected ',' in:
+""            marathon$hometown == BC.levels[3] |
+          ,""
+"

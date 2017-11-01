@@ -1,0 +1,267 @@
+---
+title: "Untitled"
+author: "Joseph Leong, Sam Whittaker, Ryan Isherwood"
+date: "November 10, 2016"
+output: html_document
+---
+
+Data Import 
+```{r, echo = F}
+library(forecast)
+library(astsa)
+library(tseries)
+#load Data set
+AAPL = read.csv("AAPL-NASDAQ-10Y.csv", header = T)
+#check first/ last values, and data type
+head(AAPL)
+tail(AAPL)
+sapply(AAPL, typeof)
+#converte dates into Date objects, corrects for todays date as well
+AAPL$date=as.Date(format(AAPL$date),format = "%Y/%m/%d")
+AAPL$date[1] = as.Date('2016/11/10')
+
+#reorder data from oldest to newest
+AAPL$date = rev(AAPL$date)
+AAPL$close = rev(AAPL$close)
+AAPL$volume = rev(AAPL$volume)
+AAPL$open = rev(AAPL$open)
+AAPL$high = rev(AAPL$high)
+AAPL$low = rev(AAPL$low)
+
+head(AAPL)
+tail(AAPL)
+
+#create mean pricing between open and close
+AAPL$mean=(AAPL$close+AAPL$open)/2
+
+# how many obs in each year
+table(format(AAPL$date,'%Y')) 
+
+#create time series object (Yearly) 
+AAPL.ts =  ts(AAPL$mean, start=c(2006,217), frequency = 252) # need to correct the frequency and start date
+ts.plot(AAPL.ts)
+plot(AAPL$date, AAPL$mean, xlab = "Year", ylab = "AAPL Average Price", main = "Performance of AAPL over a 10 year cycle", type="l")
+
+#check if dataset matches up
+head(AAPL.ts)
+head(AAPL$mean)
+tail(AAPL.ts)
+tail(AAPL$mean)
+```
+
+Determine if seasonality exist with iphone releaese
+```{r}
+#iphone
+a = AAPL[AAPL$date == "2007-06-29",]
+#iphone3g
+b = AAPL[AAPL$date == "2008-07-11",]
+#iphone3gs
+c = AAPL[AAPL$date == "2009-06-19",]
+#iphone4
+d = AAPL[AAPL$date == "2010-06-24",]
+#iphone4s
+e = AAPL[AAPL$date == "2011-10-14",]
+#iphone5
+f = AAPL[AAPL$date == "2012-09-21",]
+#iphone5c/s
+g = AAPL[AAPL$date == "2013-09-20",]
+#iphone6
+h = AAPL[AAPL$date == "2014-09-19",]
+#iphone6s
+i = AAPL[AAPL$date == "2015-09-25",]
+#iphonese
+j = AAPL[AAPL$date == "2016-03-31",]
+#iphone7
+k = AAPL[AAPL$date == "2016-09-16",]
+
+Iphone = rbind(a,b,c,d,e,f,g,h,i,j,k)
+remove(a,b,c,d,e,f,g,h,i,j,k)
+
+#Plots Price
+plot(AAPL$date, AAPL$mean, xlab = "Year", ylab = "AAPL Average Price", main = "Performance of AAPL over a 10 year cycle", type="l")
+points(Iphone$date,Iphone$mean, col = "red", pch = 22)
+```
+
+####Time Series Part
+```{r}
+ndiffs(AAPL.ts)
+summary(AAPL.ts)
+Acf(AAPL.ts, lag.max = 2519, main = "ACF of Untransformed AAPL Data")
+Pacf(AAPL.ts,lag.max = 2519, ylim =c(-.07,.07), main = "PACF of Untransformed AAPL Data")
+#clearly non stationary, non normal
+```
+
+```{r}
+#try log model
+AAPL.ts.log = log(AAPL.ts)
+plot.ts(AAPL.ts.log, main ="Log of Daily Average AAPL Price over 10 Years")
+Acf(AAPL.ts.log, lag.max = 2519, main="ACF of Log Transformed AAPL Data")
+Pacf(AAPL.ts.log, lag.max = 2519, ylim =c(-0.07,0.07), main = "PACF of Log Transformed AAPL Data")
+```
+
+```{r}
+#try Log diff model
+AAPL.ts.logdiff = diff(log(AAPL.ts ))
+plot.ts(AAPL.ts.logdiff, main= "Log Difference of Daily Average Price \n of AAPL over 10 Years")
+Acf(AAPL.ts.logdiff, lag.max = 2518,ylim=c(-0.1, 0.1), main = "ACF of Growth Rate of AAPL Data")
+Pacf(AAPL.ts.logdiff, lag.max = 2518,ylim =c(-.07,.07),main ="PACF of Growth Rate of AAPL Data")
+#this looks better
+
+#diagnostic
+temp = stl(AAPL.ts.logdiff, "per")
+plot(temp)
+```
+
+```{r}
+#model Selection (USE LOG DATA and LET ARIMA DO THE DIFFERENCE, otherwise we have to standardize the residuals between sarima and arima)
+sarima(AAPL.ts.log, 0,1,1)
+sarima(AAPL.ts.log, 0,0,1)
+sarima(AAPL.ts.log, 5,1,5)
+
+adf.test(AAPL$mean)
+adf.test(AAPL.ts.log)
+
+#using auto.arima, best models according to AIC is (0,0,1) or (0,1,1) if we dont difference 
+#WARNING THIS WILL TAKE A WHILE
+model.1 = auto.arima(AAPL.ts.log, approximation = F, trace = T)
+model.1
+
+#SIDE NOTE
+#make sure we are looking at the same AIC values
+sarima(AAPL.ts.logdiff, 0,0,1, no.constant = T)
+sarima(AAPL.ts.log, 0,1,1, no.constant = T)
+arima(AAPL.ts.log, c(0,1,1))
+arima(AAPL.ts.logdiff, c(0,0,1), include.mean = F)
+#the AIC extracted from SARIMA is not the same as AIC from arima, but it contains it
+
+#check if this is the case where (0,1,1) is best model
+#This will take a while to run for values higher than (8,1,8)
+mod =data.frame()
+for(i in 0:6)
+{
+  for(j in 0:4)
+  {
+    c = arima(AAPL.ts.log, c(i,1,j), include.mean = F)
+    d = c$aic
+    se = c$sigma2
+    r = cbind(i,1,j,d,se)
+    mod = rbind(mod,r)
+  }
+}
+
+min(mod$d)
+min(mod$se)
+mod[mod$se == min(mod$se),]
+
+#good models Supposedly
+sarima(AAPL.ts.log, 0,1,1, no.constant = T, details = F)
+
+sarima(AAPL.ts.log, 2,1,3, no.constant = T, details = T)
+
+sarima(AAPL.ts.log, 5,1,5, no.constant = T, details = F)
+sarima(AAPL.ts.log, 8,1,4, no.constant = T, details = F)
+tsdiag(arima(AAPL.ts.log, c(0,1,1), include.mean = F))
+tsdiag(arima(AAPL.ts.log, c(2,1,3), include.mean = F))
+tsdiag(arima(AAPL.ts.log, c(5,1,5), include.mean = F))
+tsdiag(arima(AAPL.ts.log, c(8,1,4), include.mean = F))
+
+sarima(AAPL.ts.log, 6,1,4, no.constant = T, details = F)
+tsdiag(arima(AAPL.ts.log, c(6,1,4), include.mean = F))
+
+sarima(AAPL.ts.log, 6,1,2, no.constant = T, details = F)
+tsdiag(arima(AAPL.ts.log, c(6,1,2), include.mean = F))
+
+
+```
+
+Garch 
+```{r}
+library(fBasics)
+library(MASS)
+library(fGarch)
+
+#model 1
+AAPL.g = garchFit(~arma(0,1)+garch(1,1), diff(AAPL.ts.log), include.mean = F, trace=F)
+AAPL.g
+summary(AAPL.g)
+plot(residuals(AAPL.g))
+
+#model 2
+AAPL.g1 = garchFit(~arma(2,3)+garch(1,1), diff(AAPL.ts.log), include.mean = F, trace=F)
+AAPL.g1
+summary(AAPL.g1)
+plot(residuals(AAPL.g1))
+
+#model 3
+AAPL.g2 = garchFit(~arma(5,5)+garch(1,1), diff(AAPL.ts.log), include.mean = F, trace=F)
+AAPL.g2
+summary(AAPL.g2)
+plot(residuals(AAPL.g2))
+
+#model 4
+AAPL.g3 = garchFit(~arma(8,4)+garch(1,1), diff(AAPL.ts.log), include.mean = F, trace=F)
+AAPL.g3
+summary(AAPL.g3)
+plot(residuals(AAPL.g3))
+
+#model 5
+AAPL.g4 = garchFit(~arma(6,4)+garch(1,1), diff(AAPL.ts.log), include.mean = F, trace=F)
+AAPL.g4
+summary(AAPL.g4)
+plot(residuals(AAPL.g4))
+
+```
+Forcasting(this part i cant figure out how to restore the drift)
+```{r}
+#ForeCasting
+temp = sarima.for(AAPL.ts.log,n.ahead=10, 6,1,4, no.constant=F)
+exp(temp$pred)
+ts.plot(AAPL.ts, exp(temp$pred), col = c("black","red"), lty = c(1,2), main = "10 day Prediction of Daily AAPL Average Price",ylab="$Dollars")
+lines(exp(temp$pred)+2*exp(temp$se), col="blue")
+lines(exp(temp$pred)-2*exp(temp$se), col="blue")
+
+#first Zoom
+ts.plot(AAPL.ts, exp(temp$pred), col = c("black","red"), lty = c(1,2), xlim = c(2016.8,2016.94), ylim = c(100,120), main = "10 day Prediction of Daily AAPL Average Price", ylab="$Dollars")
+lines(exp(temp$pred)+2*exp(temp$se), col="blue")
+lines(exp(temp$pred)-2*exp(temp$se), col="blue")
+#Second Zoom
+ts.plot(AAPL.ts, exp(temp$pred), col = c("black","red"), lty = c(1,2), xlim = c(2016.8,2016.94), ylim = c(109,112), main = "10 day Prediction of Daily AAPL Average Price", ylab="$Dollars")
+lines(exp(temp$pred)+2*exp(temp$se), col="blue")
+lines(exp(temp$pred)-2*exp(temp$se), col="blue")
+
+
+
+#as ryan said, garch prediction dosnt work well, still trying to figure this out
+pred2 = predict(AAPL.g1, n.ahead = 10)
+exp(pred2$meanForecast)
+
+```
+
+How Good is our prediction?
+```{r}
+#grab the 10 dates
+AAPL10 = read.csv("AAPL-NASDAQ-10YNOV27.csv", header = T)
+AAPL10$date=as.Date(format(AAPL10$date),format = "%Y/%m/%d")
+AAPL10 = subset(AAPL10, AAPL10$date > "2016-11-10")
+head(AAPL10)
+tail(AAPL10)
+sapply(AAPL10, typeof)
+
+#reverse everything
+AAPL10$date = rev(AAPL10$date)
+AAPL10$close = rev(AAPL10$close)
+AAPL10$volume = rev(AAPL10$volume)
+AAPL10$open = rev(AAPL10$open)
+AAPL10$high = rev(AAPL10$high)
+AAPL10$low = rev(AAPL10$low)
+
+AAPL10$mean = (AAPL10$close + AAPL10$open)/2
+
+AAPL10
+
+tab=cbind(exp(temp$pred),exp(temp$se), AAPL10$mean)
+rownames(tab) = AAPL10$date
+tab
+abs(exp(temp$pred)-AAPL10$mean)/AAPL10$mean*100
+```
+

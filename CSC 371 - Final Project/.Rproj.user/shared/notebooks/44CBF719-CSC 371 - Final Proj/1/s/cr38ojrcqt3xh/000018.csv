@@ -1,0 +1,4 @@
+"0","marathon.Other = subset(marathon, marathon$hometown == Other.levels)
+"
+"2","longer object length is not a multiple of shorter object length"
+"2","longer object length is not a multiple of shorter object length"

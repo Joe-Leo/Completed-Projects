@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "title: \"Untitled\"\nauthor: \"Joseph Leong, Sam Whittaker, Ryan Isherwood\"\ndate: \"November 10, 2016\"\noutput: html_document\n---\n  \n  This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.\n\nWhen you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:\n  \n  Data Import \n```{r}\n#load Data set\nAAPL = read.csv(\"AAPL-NASDAQ-10Y.csv\", header = T)\n#check first/ last values, and data type\nhead(AAPL)\ntail(AAPL)\nsapply(AAPL, typeof)\n#converte dates into Date objects, corrects for todays date as well\nAAPL$date=as.Date(format(AAPL$date),format = \"%Y/%m/%d\")\nAAPL$date[1] = as.Date('2016/11/10')\n\n#reorder data from oldest to newest\nAAPL$date = rev(AAPL$date)\nAAPL$close = rev(AAPL$close)\nAAPL$volume = rev(AAPL$volume)\nAAPL$open = rev(AAPL$open)\nAAPL$high = rev(AAPL$high)\nAAPL$low = rev(AAPL$low)\n\nhead(AAPL)\ntail(AAPL)\n#create time series object (Yearly) \ntable(format(AAPL$date,'%Y')) # how many obs in each year\nAAPL.mean=(AAPL$close+AAPL$open)/2\nAAPL.ts =  ts(AAPL.mean, start=c(2006,200), frequency = 252) # need to correct the frequency and start date\nts.plot(AAPL.ts)\nplot(AAPL$date, AAPL$close, xlab = \"Year\", ylab = \"AAPL Closing price\", main = \"Performance of AAPL over a 10 year cycle\", type=\"l\")\ntime(AAPL.ts)\nhead(time(AAPL.ts))\n#check if dataset matches up\nhead(AAPL.ts)\nhead(AAPL.mean)\ntail(AAPL.ts)\ntail(AAPL.mean)\n```\n\nTime Series Part\n```{r}\npar(mfrow=c(0,1))\nlibrary(forecast)\nlibrary(astsa)\nndiffs(AAPL.ts)\nsummary(AAPL.ts)\nacf(AAPL.ts,lag.max = 50)\npacf(AAPL.ts, lag.max = 50)\nAAPL[35,1]\n\n#try Log diff model\nAAPL.ts.log = log(AAPL.ts )\nplot(diff(AAPL.ts.log))\nplot.ts(AAPL.ts.log)\ndiff(AAPL.ts.log)\nacf(diff(AAPL.ts.log), max.lag = 50)\npacf(diff(AAPL.ts.log), max.lag=50)\nsarima(AAPL.ts.log, 0,1,2)\nsarima(AAPL.ts.log, 10,1,0)\n\n##Testing using a GARCH model (Handles Volatility)\n\ninstall.packages(c(\"timeSeries\",\"tseries\",\"fBasics\", \"MASS\", \"fGarch\", \"astsa\"))\nlibrary(tseries)\nlibrary(timeSeries)\nlibrary(fBasics)\nlibrary(MASS)\nlibrary(fGarch)\nlibrary(astsa)\n\nsummary((AAPL.g <- garchFit(~arma(0,1)+garch(1,1), diff(AAPL.ts.log)))) #Could use either this one\nsummary((AAPL.g.2 <- garchFit(~arma(2,0)+garch(1,1),diff(AAPL.ts.log)))) #or this one,  both got rid of the autocorrelation in residuals.  Neither are normally distributed\nplot(diff(AAPL.ts.log), ylab=\"AAPL Daily Averages\")\nAAPL.g@formula\nAAPL.g.2@formula\n\nresid=AAPL.g@residuals\nplot(resid, type = \"l\")\nqqnorm(resid)\nqqline(resid)\nacf(resid)\npacf(resid)\n\n##Should we standardize the residuals?\n\n#Forecasts: (I'm not actually sure how to properly forecast using GARCH)\npar(mfrow=c(1,1))\nfore = predict(AAPL.g.2 ,n.ahead=15,interval=\"prediction\")\nfore\nts.plot(AAPL.ts, fore$meanForecast, col=1:2, ylab= \"Mortality\")\nplot(fore$meanForecast)\n\n",
+    "created" : 1480280990699.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4241035905",
+    "id" : "5A02B6E7",
+    "lastKnownWriteTime" : 1480290358,
+    "last_content_update" : 1480290358468,
+    "path" : "//home.uvic.ca/joeleo/Desktop/STATS 457 - Project/Stat 457 Project.R",
+    "project_path" : "Stat 457 Project.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : true,
+    "source_window" : "",
+    "type" : "r_source"
+}

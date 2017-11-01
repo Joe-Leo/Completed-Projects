@@ -1,0 +1,725 @@
+---
+title: "CSC 371 - Final Project"
+author: "Joseph Leong"
+date: "April 8, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = F}
+marathon = read.csv("marathon.csv")
+BC.levels = c(levels(marathon$hometown)[2],
+              levels(marathon$hometown)[9],
+              levels(marathon$hometown)[17],
+              levels(marathon$hometown)[21],
+              levels(marathon$hometown)[24],
+              levels(marathon$hometown)[26],
+              levels(marathon$hometown)[30],
+              levels(marathon$hometown)[33],
+              levels(marathon$hometown)[37:38],
+              levels(marathon$hometown)[40],
+              levels(marathon$hometown)[44],
+              levels(marathon$hometown)[48],
+              levels(marathon$hometown)[49],
+              levels(marathon$hometown)[51],
+              levels(marathon$hometown)[54:58],
+              levels(marathon$hometown)[60:61],
+              levels(marathon$hometown)[63:64],
+              levels(marathon$hometown)[68],
+              levels(marathon$hometown)[72],
+              levels(marathon$hometown)[75],
+              levels(marathon$hometown)[80:82],
+              levels(marathon$hometown)[84],
+              levels(marathon$hometown)[88],
+              levels(marathon$hometown)[92],
+              levels(marathon$hometown)[95],
+              levels(marathon$hometown)[98:99],
+              levels(marathon$hometown)[108],
+              levels(marathon$hometown)[114],
+              levels(marathon$hometown)[120],
+              levels(marathon$hometown)[124],
+              levels(marathon$hometown)[127:130],
+              levels(marathon$hometown)[133:134],
+              levels(marathon$hometown)[144:145],
+              levels(marathon$hometown)[147],
+              levels(marathon$hometown)[150:152],
+              levels(marathon$hometown)[154:155],
+              levels(marathon$hometown)[159:160],
+              levels(marathon$hometown)[162:164],
+              levels(marathon$hometown)[171:172],
+              levels(marathon$hometown)[174],
+              levels(marathon$hometown)[176],
+              levels(marathon$hometown)[177],
+              levels(marathon$hometown)[187:188],
+              levels(marathon$hometown)[190:191],
+              levels(marathon$hometown)[193],
+              levels(marathon$hometown)[195],
+              levels(marathon$hometown)[199],
+              levels(marathon$hometown)[209],
+              levels(marathon$hometown)[212],
+              levels(marathon$hometown)[214],
+              levels(marathon$hometown)[221],
+              levels(marathon$hometown)[223:224],
+              levels(marathon$hometown)[227],
+              levels(marathon$hometown)[230:231]
+              )
+Can.levels = c(levels(marathon$hometown)[3],
+               levels(marathon$hometown)[6],
+               levels(marathon$hometown)[14],
+               levels(marathon$hometown)[15],
+               levels(marathon$hometown)[22],
+               levels(marathon$hometown)[25],
+               levels(marathon$hometown)[29],
+               levels(marathon$hometown)[31:32],
+               levels(marathon$hometown)[34],
+               levels(marathon$hometown)[43],
+               levels(marathon$hometown)[45:46],
+               levels(marathon$hometown)[50],
+               levels(marathon$hometown)[59],
+               levels(marathon$hometown)[62],
+               levels(marathon$hometown)[66],
+               levels(marathon$hometown)[74],
+               levels(marathon$hometown)[76:77],
+               levels(marathon$hometown)[85:87],
+               levels(marathon$hometown)[93:94],
+               levels(marathon$hometown)[97],
+               levels(marathon$hometown)[102],
+               levels(marathon$hometown)[105:106],
+               levels(marathon$hometown)[109],
+               levels(marathon$hometown)[118],
+               levels(marathon$hometown)[135],
+               levels(marathon$hometown)[137:138],
+               levels(marathon$hometown)[142],
+               levels(marathon$hometown)[165],
+               levels(marathon$hometown)[167:168],
+               levels(marathon$hometown)[170],
+               levels(marathon$hometown)[182],
+               levels(marathon$hometown)[189],
+               levels(marathon$hometown)[200:201],
+               levels(marathon$hometown)[203],
+               levels(marathon$hometown)[205:206],
+               levels(marathon$hometown)[211],
+               levels(marathon$hometown)[214],
+               levels(marathon$hometown)[218],
+               levels(marathon$hometown)[225],
+               levels(marathon$hometown)[228],
+               levels(marathon$hometown)[232:234],
+               levels(marathon$hometown)[236]
+               )
+US.levels = c(levels(marathon$hometown)[4],
+              levels(marathon$hometown)[5],
+              levels(marathon$hometown)[7],
+              levels(marathon$hometown)[8],
+              levels(marathon$hometown)[10],
+              levels(marathon$hometown)[11],
+              levels(marathon$hometown)[12],
+              levels(marathon$hometown)[13],
+              levels(marathon$hometown)[16],
+              levels(marathon$hometown)[18:20],
+              levels(marathon$hometown)[23],
+              levels(marathon$hometown)[27:28],
+              levels(marathon$hometown)[35:36],
+              levels(marathon$hometown)[39],
+              levels(marathon$hometown)[41:42],
+              levels(marathon$hometown)[47],
+              levels(marathon$hometown)[52],
+              levels(marathon$hometown)[65],
+              levels(marathon$hometown)[67],
+              levels(marathon$hometown)[70:71],
+              levels(marathon$hometown)[73],
+              levels(marathon$hometown)[78],
+              levels(marathon$hometown)[83],
+              levels(marathon$hometown)[89],
+              levels(marathon$hometown)[96],
+              levels(marathon$hometown)[100:101],
+              levels(marathon$hometown)[103],
+              levels(marathon$hometown)[107],
+              levels(marathon$hometown)[110],
+              levels(marathon$hometown)[115],
+              levels(marathon$hometown)[117],
+              levels(marathon$hometown)[121:123],
+              levels(marathon$hometown)[125],
+              levels(marathon$hometown)[126],
+              levels(marathon$hometown)[131:132],
+              levels(marathon$hometown)[139:140],
+              levels(marathon$hometown)[143],
+              levels(marathon$hometown)[146],
+              levels(marathon$hometown)[148:149],
+              levels(marathon$hometown)[153],
+              levels(marathon$hometown)[156:157],
+              levels(marathon$hometown)[161],
+              levels(marathon$hometown)[166],
+              levels(marathon$hometown)[169],
+              levels(marathon$hometown)[173],
+              levels(marathon$hometown)[175],
+              levels(marathon$hometown)[178:181],
+              levels(marathon$hometown)[183],
+              levels(marathon$hometown)[185:186],
+              levels(marathon$hometown)[192],
+              levels(marathon$hometown)[194],
+              levels(marathon$hometown)[196],
+              levels(marathon$hometown)[198],
+              levels(marathon$hometown)[202],
+              levels(marathon$hometown)[204],
+              levels(marathon$hometown)[207],
+              levels(marathon$hometown)[210],
+              levels(marathon$hometown)[213],
+              levels(marathon$hometown)[219],
+              levels(marathon$hometown)[222],
+              levels(marathon$hometown)[226],
+              levels(marathon$hometown)[229],
+              levels(marathon$hometown)[235]
+              )
+Other.levels= c(levels(marathon$hometown)[1],
+                levels(marathon$hometown)[53],
+                levels(marathon$hometown)[69],
+                levels(marathon$hometown)[79],
+                levels(marathon$hometown)[90:91],
+                levels(marathon$hometown)[104:105],
+                levels(marathon$hometown)[111:113],
+                levels(marathon$hometown)[116],
+                levels(marathon$hometown)[119],
+                levels(marathon$hometown)[136],
+                levels(marathon$hometown)[141],
+                levels(marathon$hometown)[158],
+                levels(marathon$hometown)[174],
+                levels(marathon$hometown)[184],
+                levels(marathon$hometown)[197],
+                levels(marathon$hometown)[208],
+                levels(marathon$hometown)[215],
+                levels(marathon$hometown)[217],
+                levels(marathon$hometown)[220]
+          )
+female.levels = levels(marathon$division)[1:13]
+male.levels = levels(marathon$division)[14:26]
+
+```
+
+```{r subset, echo=FALSE}
+
+marathon.BC = marathon[ marathon$hometown == BC.levels[1] |
+              marathon$hometown == BC.levels[2] |
+              marathon$hometown == BC.levels[3] |
+              marathon$hometown == BC.levels[4] |
+              marathon$hometown == BC.levels[5] |
+              marathon$hometown == BC.levels[6] |
+              marathon$hometown == BC.levels[7] |
+              marathon$hometown == BC.levels[8] |
+              marathon$hometown == BC.levels[9] |
+              marathon$hometown == BC.levels[10] |
+              marathon$hometown == BC.levels[11] |
+              marathon$hometown == BC.levels[12] |
+              marathon$hometown == BC.levels[13] |
+              marathon$hometown == BC.levels[14] |
+              marathon$hometown == BC.levels[15] |
+              marathon$hometown == BC.levels[16] |
+              marathon$hometown == BC.levels[17] |
+              marathon$hometown == BC.levels[18] |
+              marathon$hometown == BC.levels[19] |
+              marathon$hometown == BC.levels[20] |
+              marathon$hometown == BC.levels[21] |
+              marathon$hometown == BC.levels[22] |
+              marathon$hometown == BC.levels[23] |
+              marathon$hometown == BC.levels[24] |
+              marathon$hometown == BC.levels[25] |
+              marathon$hometown == BC.levels[26] |
+              marathon$hometown == BC.levels[27] |
+              marathon$hometown == BC.levels[28] |
+              marathon$hometown == BC.levels[29] |
+              marathon$hometown == BC.levels[30] |
+              marathon$hometown == BC.levels[31] |
+              marathon$hometown == BC.levels[32] |
+              marathon$hometown == BC.levels[33] |
+              marathon$hometown == BC.levels[34] |
+              marathon$hometown == BC.levels[35] |
+              marathon$hometown == BC.levels[36] |
+              marathon$hometown == BC.levels[37] |
+              marathon$hometown == BC.levels[38] |
+              marathon$hometown == BC.levels[39] |
+              marathon$hometown == BC.levels[40] |
+              marathon$hometown == BC.levels[41] |
+              marathon$hometown == BC.levels[42] |
+              marathon$hometown == BC.levels[43] |
+              marathon$hometown == BC.levels[44] |
+              marathon$hometown == BC.levels[45] |
+              marathon$hometown == BC.levels[46] |
+              marathon$hometown == BC.levels[47] |
+              marathon$hometown == BC.levels[48] |
+              marathon$hometown == BC.levels[49] |
+              marathon$hometown == BC.levels[50] |
+              marathon$hometown == BC.levels[51] |
+              marathon$hometown == BC.levels[52] |
+              marathon$hometown == BC.levels[53] |
+              marathon$hometown == BC.levels[54] |
+              marathon$hometown == BC.levels[55] |
+              marathon$hometown == BC.levels[56] |
+              marathon$hometown == BC.levels[57] |
+              marathon$hometown == BC.levels[58] |
+              marathon$hometown == BC.levels[59] |
+              marathon$hometown == BC.levels[60] |
+              marathon$hometown == BC.levels[61] |
+              marathon$hometown == BC.levels[62] |
+              marathon$hometown == BC.levels[63] |
+              marathon$hometown == BC.levels[64] |
+              marathon$hometown == BC.levels[65] |
+              marathon$hometown == BC.levels[66] |
+              marathon$hometown == BC.levels[67] |
+              marathon$hometown == BC.levels[68] |
+              marathon$hometown == BC.levels[69] |
+              marathon$hometown == BC.levels[70] |
+              marathon$hometown == BC.levels[71] |
+              marathon$hometown == BC.levels[72] |
+              marathon$hometown == BC.levels[73] |
+              marathon$hometown == BC.levels[74] |
+              marathon$hometown == BC.levels[75] |
+              marathon$hometown == BC.levels[76] |
+              marathon$hometown == BC.levels[77] |
+              marathon$hometown == BC.levels[78] |
+              marathon$hometown == BC.levels[79] |
+              marathon$hometown == BC.levels[80] 
+              ,]
+
+marathon.Can = marathon[ marathon$hometown == Can.levels[1] |
+              marathon$hometown == Can.levels[2] |
+              marathon$hometown == Can.levels[3] |
+              marathon$hometown == Can.levels[4] |
+              marathon$hometown == Can.levels[5] |
+              marathon$hometown == Can.levels[6] |
+              marathon$hometown == Can.levels[7] |
+              marathon$hometown == Can.levels[8] |
+              marathon$hometown == Can.levels[9] |
+              marathon$hometown == Can.levels[10] |
+              marathon$hometown == Can.levels[11] |
+              marathon$hometown == Can.levels[12] |
+              marathon$hometown == Can.levels[13] |
+              marathon$hometown == Can.levels[14] |
+              marathon$hometown == Can.levels[15] |
+              marathon$hometown == Can.levels[16] |
+              marathon$hometown == Can.levels[17] |
+              marathon$hometown == Can.levels[18] |
+              marathon$hometown == Can.levels[19] |
+              marathon$hometown == Can.levels[20] |
+              marathon$hometown == Can.levels[21] |
+              marathon$hometown == Can.levels[22] |
+              marathon$hometown == Can.levels[23] |
+              marathon$hometown == Can.levels[24] |
+              marathon$hometown == Can.levels[25] |
+              marathon$hometown == Can.levels[26] |
+              marathon$hometown == Can.levels[27] |
+              marathon$hometown == Can.levels[28] |
+              marathon$hometown == Can.levels[29] |
+              marathon$hometown == Can.levels[30] |
+              marathon$hometown == Can.levels[31] |
+              marathon$hometown == Can.levels[32] |
+              marathon$hometown == Can.levels[33] |
+              marathon$hometown == Can.levels[34] |
+              marathon$hometown == Can.levels[35] |
+              marathon$hometown == Can.levels[36] |
+              marathon$hometown == Can.levels[37] |
+              marathon$hometown == Can.levels[38] |
+              marathon$hometown == Can.levels[39] |
+              marathon$hometown == Can.levels[40] |
+              marathon$hometown == Can.levels[41] |
+              marathon$hometown == Can.levels[42] |
+              marathon$hometown == Can.levels[43] |
+              marathon$hometown == Can.levels[44] |
+              marathon$hometown == Can.levels[45] |
+              marathon$hometown == Can.levels[46] |
+              marathon$hometown == Can.levels[47] |
+              marathon$hometown == Can.levels[48] |
+              marathon$hometown == Can.levels[49] |
+              marathon$hometown == Can.levels[50] |
+              marathon$hometown == Can.levels[51] |
+              marathon$hometown == Can.levels[52] |
+              marathon$hometown == Can.levels[53] |
+              marathon$hometown == Can.levels[54] |
+              marathon$hometown == Can.levels[55] 
+              ,]
+
+marathon.Other = marathon[ marathon$hometown == Other.levels[1] |
+                  marathon$hometown == Other.levels[2] |
+                  marathon$hometown == Other.levels[3] |
+                  marathon$hometown == Other.levels[4] |
+                  marathon$hometown == Other.levels[5] |
+                  marathon$hometown == Other.levels[6] |
+                  marathon$hometown == Other.levels[7] |
+                  marathon$hometown == Other.levels[8] |
+                  marathon$hometown == Other.levels[9] |
+                  marathon$hometown == Other.levels[10] |
+                  marathon$hometown == Other.levels[11] |
+                  marathon$hometown == Other.levels[12] |
+                  marathon$hometown == Other.levels[13] |
+                  marathon$hometown == Other.levels[14] |
+                  marathon$hometown == Other.levels[15] |
+                  marathon$hometown == Other.levels[16] |
+                  marathon$hometown == Other.levels[17] |
+                  marathon$hometown == Other.levels[18] |
+                  marathon$hometown == Other.levels[19] |
+                  marathon$hometown == Other.levels[20] |
+                  marathon$hometown == Other.levels[21] |
+                  marathon$hometown == Other.levels[22] |
+                  marathon$hometown == Other.levels[23] 
+              ,]
+
+marathon.US = marathon[ marathon$hometown == US.levels[1] |
+              marathon$hometown == US.levels[2] |
+              marathon$hometown == US.levels[3] |
+              marathon$hometown == US.levels[4] |
+              marathon$hometown == US.levels[5] |
+              marathon$hometown == US.levels[6] |
+              marathon$hometown == US.levels[7] |
+              marathon$hometown == US.levels[8] |
+              marathon$hometown == US.levels[9] |
+              marathon$hometown == US.levels[10] |
+              marathon$hometown == US.levels[11] |
+              marathon$hometown == US.levels[12] |
+              marathon$hometown == US.levels[13] |
+              marathon$hometown == US.levels[14] |
+              marathon$hometown == US.levels[15] |
+              marathon$hometown == US.levels[16] |
+              marathon$hometown == US.levels[17] |
+              marathon$hometown == US.levels[18] |
+              marathon$hometown == US.levels[19] |
+              marathon$hometown == US.levels[20] |
+              marathon$hometown == US.levels[21] |
+              marathon$hometown == US.levels[22] |
+              marathon$hometown == US.levels[23] |
+              marathon$hometown == US.levels[24] |
+              marathon$hometown == US.levels[25] |
+              marathon$hometown == US.levels[26] |
+              marathon$hometown == US.levels[27] |
+              marathon$hometown == US.levels[28] |
+              marathon$hometown == US.levels[29] |
+              marathon$hometown == US.levels[30] |
+              marathon$hometown == US.levels[31] |
+              marathon$hometown == US.levels[32] |
+              marathon$hometown == US.levels[33] |
+              marathon$hometown == US.levels[34] |
+              marathon$hometown == US.levels[35] |
+              marathon$hometown == US.levels[36] |
+              marathon$hometown == US.levels[37] |
+              marathon$hometown == US.levels[38] |
+              marathon$hometown == US.levels[39] |
+              marathon$hometown == US.levels[40] |
+              marathon$hometown == US.levels[41] |
+              marathon$hometown == US.levels[42] |
+              marathon$hometown == US.levels[43] |
+              marathon$hometown == US.levels[44] |
+              marathon$hometown == US.levels[45] |
+              marathon$hometown == US.levels[46] |
+              marathon$hometown == US.levels[47] |
+              marathon$hometown == US.levels[48] |
+              marathon$hometown == US.levels[49] |
+              marathon$hometown == US.levels[50] |
+              marathon$hometown == US.levels[51] |
+              marathon$hometown == US.levels[52] |
+              marathon$hometown == US.levels[53] |
+              marathon$hometown == US.levels[54] |
+              marathon$hometown == US.levels[55] |
+              marathon$hometown == US.levels[56] |
+              marathon$hometown == US.levels[57] |
+              marathon$hometown == US.levels[58] |
+              marathon$hometown == US.levels[59] |
+              marathon$hometown == US.levels[60] |
+              marathon$hometown == US.levels[61] |
+              marathon$hometown == US.levels[62] |
+              marathon$hometown == US.levels[63] |
+              marathon$hometown == US.levels[64] |
+              marathon$hometown == US.levels[65] |
+              marathon$hometown == US.levels[66] |
+              marathon$hometown == US.levels[67] |
+              marathon$hometown == US.levels[68] |
+              marathon$hometown == US.levels[69] |
+              marathon$hometown == US.levels[70] |
+              marathon$hometown == US.levels[71] |
+              marathon$hometown == US.levels[72] |
+              marathon$hometown == US.levels[73] |
+              marathon$hometown == US.levels[74] |
+              marathon$hometown == US.levels[75] |
+              marathon$hometown == US.levels[76] |
+              marathon$hometown == US.levels[77] |
+              marathon$hometown == US.levels[78] |
+              marathon$hometown == US.levels[79] |
+              marathon$hometown == US.levels[80] 
+              ,]
+marathon.F = marathon[ marathon$division == female.levels[1] |
+                       marathon$division == female.levels[2] |
+                       marathon$division == female.levels[3] |
+                       marathon$division == female.levels[4] |
+                       marathon$division == female.levels[5] |
+                       marathon$division == female.levels[6] |
+                       marathon$division == female.levels[7] |
+                       marathon$division == female.levels[8] |
+                       marathon$division == female.levels[9] |
+                       marathon$division == female.levels[10] |
+                       marathon$division == female.levels[11] |
+                       marathon$division == female.levels[12] |
+                       marathon$division == female.levels[13] 
+                       ,]
+marathon.M = marathon[ marathon$division == male.levels[1] |
+                       marathon$division == male.levels[2] |
+                       marathon$division == male.levels[3] |
+                       marathon$division == male.levels[4] |
+                       marathon$division == male.levels[5] |
+                       marathon$division == male.levels[6] |
+                       marathon$division == male.levels[7] |
+                       marathon$division == male.levels[8] |
+                       marathon$division == male.levels[9] |
+                       marathon$division == male.levels[10] |
+                       marathon$division == male.levels[11] |
+                       marathon$division == male.levels[12] |
+                       marathon$division == male.levels[13] 
+                       ,] 
+## reduce levels
+marathon.BC = droplevels(marathon.BC)
+marathon.Can = droplevels(marathon.Can)
+marathon.Other = droplevels(marathon.Other)
+marathon.US = droplevels(marathon.US)
+marathon.F = droplevels(marathon.F)
+marathon.M = droplevels(marathon.M)
+```
+This project is to illustrate data visulazation techniques used on the Victoria Marathon 2016 dataset (https://connex.csc.uvic.ca/access/content/group/788529df-e04c-4ee7-a7e7-886b19555ec0/misc/victoria_marathon_2016.sql)
+
+Sqlite3 was used to convert the victoria_marathon_2016.sql into a .csv file which was then analyzed using R.
+
+
+Three particular aspects of the dataset was chosen to be analyzed 
+
+* Distribution of Marathoners by Hometown
+
+* Distribution of Marathoners by Division
+
+* Distribution of Marathoner Finish Times filtered by Division and Hometown
+
+
+# Plots of Distribution of Marathoner's Home Town
+```{r, distribtuion plots, echo = F}
+barplot(table(marathon.BC$hometown)[table(marathon.BC$hometown) > 3],
+        main = "Distribution of BC Marathoner's Hometowns \n (at least 3 people from the city)",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+```{r, echo = F}
+barplot(table(marathon.US$hometown)[table(marathon.US$hometown) > 1],
+        main = "Distribution of US Marathoner's Hometowns  \n (at least 2 people from the city)",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+```{r, echo = F}
+barplot(table(marathon.Can$hometown)[table(marathon.Other$hometown) > 1],
+        main = "Distribution of Canadian Marathoner's Hometowns from outside of BC  \n (at least 2 people from the city)",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+
+```{r, echo = F}
+barplot(table(marathon.Other$hometown)[table(marathon.Other$hometown) > 0],
+        main = "Distribution Marathoner's Hometown outside of Canada/US",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+
+```{r, echo = F}
+barplot(sort(table(marathon$hometown), decreasing = T)[1:20],
+        main = "Top 20 City Representation by Marathoners",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+# Age Distribution by Gender
+```{r, echo = F}
+barplot(table(marathon.F$division),
+        main = "Distribution of Age of Female Marathoners",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+```{r, echo = F}
+barplot(table(marathon.M$division),
+        main = "Distribution of Age of Male Marathoners",
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5)
+```
+
+# Distribution of Finish Times
+
+```{r, echo = F}
+barplot(rev(marathon[order(marathon$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon[order(marathon$total_seconds)[1:20],]$name),
+        main = "Top 20 Marathoner Finish Times",
+        xlim = c(8000,11000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+```{r, echo = F}
+barplot(marathon[order(-marathon$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon[order(-marathon$total_seconds)[1:20],]$name,
+        main = "Bottom 20 Marathoner Finish Times",
+        xlim = c(22000,30000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r top 20 F, echo = F}
+barplot(rev(marathon.F[order(marathon.F$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon.F[order(marathon.F$total_seconds)[1:20],]$name),
+        main = "Top 20 Female Marathoner Finish Times",
+        xlim = c(9000,13000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+```{r Bottom 20 F, echo = F}
+barplot(marathon.F[order(-marathon.F$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon.F[order(-marathon.F$total_seconds)[1:20],]$name,
+        main = "Bottom 20 Female Marathoner Finish Times",
+        xlim = c(22000,30000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r top 20 M, echo = F}
+barplot(rev(marathon.M[order(marathon.M$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon.M[order(marathon.M$total_seconds)[1:20],]$name),
+        main = "Top 20 MaleMarathoner Finish Times",
+        xlim = c(8000,11000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+```{r, echo = F}
+barplot(marathon.M[order(-marathon.M$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon.M[order(-marathon.M$total_seconds)[1:20],]$name,
+        main = "Bottom 20 Male Marathoner Finish Times",
+        xlim = c(20000,28000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+```{r Top 20 BC, echo = F}
+barplot(rev(marathon.BC[order(marathon.BC$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon.BC[order(marathon.BC$total_seconds)[1:20],]$name),
+        main = "Top 20 BC Marathoner Finish Times",
+        xlim = c(8500,11000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r Bottom 20 BC, echo = F}
+barplot(marathon.BC[order(-marathon.BC$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon.BC[order(-marathon.BC$total_seconds)[1:20],]$name,
+        main = "Bottom 20 BC Marathoner Finish Times",
+        xlim = c(22000,30000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r Top20 Canada, echo = F}
+barplot(rev(marathon.Can[order(marathon.Can$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon.Can[order(marathon.Can$total_seconds)[1:20],]$name),
+        main = "Top 20 BC Marathoner Finish Times",
+        xlim = c(8000,12000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+
+```{r Bottom 20 Canada, echo = F}
+barplot(marathon.Can[order(-marathon.Can$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon.Can[order(-marathon.Can$total_seconds)[1:20],]$name,
+        main = "Bottom 20 Non-BC Canadian Marathoner Finish Times",
+        xlim = c(18000,26000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r Top 20 USA, echo = F}
+barplot(rev(marathon.US[order(marathon.US$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon.US[order(marathon.US$total_seconds)[1:20],]$name),
+        main = "Top 20 American Marathoner Finish Times",
+        xlim = c(9000,13000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r Bottom 20 USA, echo = F}
+barplot(marathon.US[order(-marathon.US$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon.US[order(-marathon.US$total_seconds)[1:20],]$name,
+        main = "Bottom 20 American Marathoner Finish Times",
+        xlim = c(18000,28000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r Top 20 Other, echo = F}
+barplot(rev(marathon.Other[order(marathon.Other$total_seconds)[1:20],]$total_seconds),
+        names.arg = rev(marathon.Other[order(marathon.Other$total_seconds)[1:20],]$name),
+        main = "Top 20 non Canadian/American Marathoner Finish Times",
+        xlim = c(10000,15000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
+
+```{r Bottom 20 Other, echo = F}
+barplot(marathon.Other[order(-marathon.Other$total_seconds)[1:20],]$total_seconds,
+        names.arg = marathon.Other[order(-marathon.Other$total_seconds)[1:20],]$name,
+        main = "Bottom 20 non Canadian/American Marathoner Finish Times",
+        xlim = c(13000,26000),
+        xlab = c("seconds (s)"),
+        horiz = T,
+        las  = 1,
+        cex.names = 0.5,
+        xpd = F)
+```
